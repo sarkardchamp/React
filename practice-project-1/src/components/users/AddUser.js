@@ -1,52 +1,78 @@
-import { useState } from "react";
-import Card from "../UI/Card";
-import classes from "./AddUser.module.css";
+import React, { useState } from "react";
 import Button from "../UI/Button";
+import Card from "../UI/Card";
+import ErrorModal from "../UI/ErrorModal";
+import styles from "./AddUser.module.css";
 
 const AddUser = (props) => {
-  const [enteredUSername, setEnteredUsername] = useState("");
+  const [enteredUsername, setEnteredUsername] = useState("");
   const [enteredAge, setEnteredAge] = useState("");
-  const onSubmitHandler = (event) => {
-    event.preventDefault();
-    if (enteredUSername.trim().length === 0 || enteredAge.trim().length === 0) {
-      props.setValidity(false);
-      setEnteredUsername("");
-      props.setErrorMessage(
-        "Please enter valid Name and Age (non-empty values)."
-      );
-      return;
-    } else if (Number(enteredAge.trim()) < 0) {
-      props.setValidity(false);
-      setEnteredAge("Please enter a valid Age (>0).");
-      props.setErrorMessage("Please ");
-      return;
-    }
-    props.setValidity(true);
-    props.addUser(enteredUSername, enteredAge);
-    setEnteredAge("");
-    setEnteredUsername("");
-  };
+  const [error, setError] = useState(false);
+
   const usernameChangeHandler = (event) => {
     setEnteredUsername(event.target.value);
   };
+
   const ageChangeHandler = (event) => {
     setEnteredAge(event.target.value);
   };
+
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
+    if (enteredUsername.trim().length > 0 && enteredAge > 0) {
+      props.onAddUser({
+        name: enteredUsername,
+        age: enteredAge,
+        id: Math.random().toString(),
+      });
+      setEnteredAge("");
+      setEnteredUsername("");
+    } else if (
+      enteredAge.trim().length === 0 ||
+      enteredUsername.trim().length === 0
+    ) {
+      setError({
+        title: "Invalid Input!",
+        message: "Please enter non-empty name and age.",
+      });
+    } else if (enteredAge <= 0) {
+      setError({ title: "Invalid Age!", message: "Please enter a valid age." });
+    }
+  };
+
+  const onCancelHandler = () => {
+    setError(false);
+  };
+
   return (
-    <Card className={classes.input}>
-      <form onSubmit={onSubmitHandler}>
-        <label>Username</label>
-        <input
-          type="text"
-          onChange={usernameChangeHandler}
-          value={enteredUSername}
+    <React.Fragment>
+      {error && (
+        <ErrorModal
+          title={error.title}
+          message={error.message}
+          onCancel={onCancelHandler}
         />
-        <label>Age (in Years)</label>
-        <input type="number" onChange={ageChangeHandler} value={enteredAge} />
-        <Button type="submit">Add User</Button>
-      </form>
-    </Card>
+      )}
+      <Card className={styles.input}>
+        <form onSubmit={onSubmitHandler}>
+          <label htmlFor="usename">Username</label>
+          <input
+            id="username"
+            type="text"
+            onChange={usernameChangeHandler}
+            value={enteredUsername}
+          />
+          <label htmlFor="age">Age (Years)</label>
+          <input
+            id="age"
+            type="number"
+            onChange={ageChangeHandler}
+            value={enteredAge}
+          />
+          <Button type="submit">Add User</Button>
+        </form>
+      </Card>
+    </React.Fragment>
   );
 };
-
 export default AddUser;

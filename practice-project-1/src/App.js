@@ -1,34 +1,16 @@
 import React, { useState } from "react";
-import ErrorModal from "./components/UI/ErrorModal";
-import AddUser from "./components/users/AddUser";
-import UserList from "./components/users/UserList";
-
+import AddUser from "./components/Users/AddUser";
+import UserList from "./components/Users/UserList";
 function App() {
-  const [isValid, setIsValid] = useState(true);
-  const [errMsg, setErrMsg] = useState("");
   const [users, setUsers] = useState([]);
-  const checkValidity = (validity) => {
-    setIsValid(validity);
-  };
-  const setErrorMessage = (msg) => {
-    setErrMsg(msg);
-  };
-  const addUserHandler = (name, age) => {
+  const addUserHandler = (user) => {
     setUsers((prevState) => {
-      return [...prevState, [name, age]];
+      return [...prevState, user];
     });
-  };
-  const errClickHandler = (event) => {
-    setIsValid(true);
   };
   return (
     <React.Fragment>
-      <AddUser
-        setValidity={checkValidity}
-        setErrorMessage={setErrorMessage}
-        addUser={addUserHandler}
-      />
-      {!isValid && <ErrorModal errMsg={errMsg} onClick={errClickHandler} />}
+      <AddUser onAddUser={addUserHandler} />
       <UserList users={users} />
     </React.Fragment>
   );

@@ -1,28 +1,37 @@
-import ReactDom from "react-dom";
 import Button from "./Button";
 import Card from "./Card";
 import classes from "./ErrorModal.module.css";
-const Modal = (props) => {
+import ReactDOM from "react-dom";
+
+const Node = (props) => {
+  const clickHandler = () => {
+    props.onCancel();
+  };
   return (
-    <div className={classes.backdrop} onClick={props.onClick}>
+    <div className={classes.backdrop} onClick={clickHandler}>
       <Card className={classes.modal}>
-        <div className={classes.header}>
-          <h2>Invalid Input</h2>
-        </div>
+        <header className={classes.header}>
+          <h2>{props.title}</h2>
+        </header>
         <div className={classes.content}>
-          <p>{props.errMsg}</p>
+          <p>{props.message}</p>
         </div>
-        <div className={classes.actions}>
-          <Button onClick={props.onClick}>Ok</Button>
-        </div>
+        <footer className={classes.actions}>
+          <Button onClick={clickHandler}>Okay</Button>
+        </footer>
       </Card>
     </div>
   );
 };
+
 const ErrorModal = (props) => {
-  return ReactDom.createPortal(
-    <Modal onClick={props.onClick} errMsg={props.errMsg} />,
-    document.getElementById("modal")
+  return ReactDOM.createPortal(
+    <Node
+      title={props.title}
+      message={props.message}
+      onCancel={props.onCancel}
+    />,
+    document.getElementById("modal-root")
   );
 };
 
