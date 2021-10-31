@@ -22,10 +22,6 @@
   width: 100%;
 }
 
-.control textarea {
-  resize: none;
-}
-
 .actions {
   margin-top: 1rem;
   text-align: right;
