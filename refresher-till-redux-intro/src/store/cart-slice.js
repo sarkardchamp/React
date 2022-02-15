@@ -5,13 +5,19 @@ const cartSlice = createSlice({
   initialState: {
     items: [],
     totalQuantities: 0,
+    changed: false,
   },
   reducers: {
+    replaceCart(state, action) {
+      state.items = action.payload.items || [];
+      state.totalQuantities = action.payload.totalQuantities;
+    },
     addItemToCart(state, action) {
       const newItem = action.payload;
       const existingItem = state.items.find(
         (item) => item.itemId === newItem.id
       );
+      state.changed = true;
       state.totalQuantities += 1;
       if (!existingItem) {
         state.items.push({
@@ -30,6 +36,7 @@ const cartSlice = createSlice({
     removeItemFromCart(state, action) {
       state.totalQuantities -= 1;
       const id = action.payload;
+      state.changed = true;
       const existingItem = state.items.find((item) => item.itemId === id);
       if (existingItem.quantity === 1) {
         state.items = state.items.filter((item) => item.itemId !== id);
